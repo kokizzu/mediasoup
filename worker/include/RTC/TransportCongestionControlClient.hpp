@@ -36,6 +36,9 @@ namespace RTC
 		class Listener
 		{
 		public:
+			virtual ~Listener() = default;
+
+		public:
 			virtual void OnTransportCongestionControlClientBitrates(
 			  RTC::TransportCongestionControlClient* tccClient,
 			  RTC::TransportCongestionControlClient::Bitrates& bitrates) = 0;
@@ -49,7 +52,8 @@ namespace RTC
 		TransportCongestionControlClient(
 		  RTC::TransportCongestionControlClient::Listener* listener,
 		  RTC::BweType bweType,
-		  uint32_t initialAvailableBitrate);
+		  uint32_t initialAvailableBitrate,
+		  uint32_t maxOutgoingBitrate);
 		virtual ~TransportCongestionControlClient();
 
 	public:
@@ -66,6 +70,7 @@ namespace RTC
 		void ReceiveRtcpReceiverReport(RTC::RTCP::ReceiverReportPacket* packet, float rtt, int64_t nowMs);
 		void ReceiveRtcpTransportFeedback(const RTC::RTCP::FeedbackRtpTransportPacket* feedback);
 		void SetDesiredBitrate(uint32_t desiredBitrate, bool force);
+		void SetMaxOutgoingBitrate(uint32_t maxBitrate);
 		const Bitrates& GetBitrates() const
 		{
 			return this->bitrates;
@@ -103,6 +108,7 @@ namespace RTC
 		// Others.
 		RTC::BweType bweType;
 		uint32_t initialAvailableBitrate{ 0u };
+		uint32_t maxOutgoingBitrate{ 0u };
 		Bitrates bitrates;
 		bool availableBitrateEventCalled{ false };
 		uint64_t lastAvailableBitrateEventAtMs{ 0u };
